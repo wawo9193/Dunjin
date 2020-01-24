@@ -2,18 +2,25 @@ import React from 'react';
 import { Form, Col, Button } from 'react-bootstrap';
 import './log-in.css';
 
-
 export default class Login extends React.Component {
+    signInClick() {
+        console.log("test");
+    }
+    signUpClick() {
+        console.log("SIGN UP!");
+    }
     render() {
         return (
-            <div id="loginouter">
-                <div id="loginbody" className="border border-danger bg-danger rounded">
+            <div id="loginouter" className="border border-warning rounded">
+                <br/>
+                <div id="loginbody" className="border bg-white border-info rounded">
+                    <img src={ "/key.png" } className="img-space" alt="key"/>
                     <h1 className="text-center">Log in</h1>
                     <br/>
                     <Form>
                         <Form.Group>
                             <Col>
-                                <Form.Label for="emailInput">
+                                <Form.Label htmlFor="emailInput">
                                     Email:
                                 </Form.Label>
                                 <Form.Control type="email" placeholder="name@example.com" id="emailInput"/>
@@ -21,16 +28,16 @@ export default class Login extends React.Component {
                         </Form.Group>
                         <Form.Group>
                             <Col>
-                                <Form.Label for="passInput">
+                                <Form.Label htmlFor="passInput">
                                     Password:
                                 </Form.Label>
                                 <Form.Control type="password" placeholder="Password" id="passInput"/>
                             </Col>
                         </Form.Group>
                     </Form>
-                    <div class="col text-center">
-                        <Button className="btn btn-warning text-white btn-space btn-outline-warning"> Sign In </Button> 
-                        <Button className="btn bg-warning text-white btn-space btn-outline-warning"> Sign Up </Button>
+                    <div className="col text-center">
+                        <Button className="btn btn-info text-white btn-space" onClick={this.signInClick}> Sign In </Button> 
+                        <Button className="btn bg-info text-white btn-space" onClick={this.signUpClick}> Sign Up </Button>
                     </div>
                 </div>
             </div>
