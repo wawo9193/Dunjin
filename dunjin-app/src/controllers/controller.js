@@ -43,7 +43,7 @@ const getTransactions = (req, res) => {
     .subtract(30, "days")
     .format("YYYY-MM-DD");
   let endDate = moment().format("YYYY-MM-DD");
-  console.log("made it past variables");
+//   console.log("made it past variables");
   client.getTransactions(
     ACCESS_TOKEN,
     startDate,
@@ -53,16 +53,21 @@ const getTransactions = (req, res) => {
       offset: 0
     },
     function(error, tRes) {
-      res.json({ transactions: tRes });
+      res.send(tRes['transactions']);
     //   console.log(tRes);
         // console.log(tRes);
         // // console.log("****************")
-        // // console.log(tRes['transactions'][0]['name']);
+        console.log(tRes['transactions'][0]);
         // // console.log("****************")
         // var n = tRes['total_transactions']
         // for (var i=0; i<n; i++) {
         //     console.log(tRes['transactions'][i]['name'] + ' - ' + tRes['transactions'][i]['amount']);
         // }
+        // var test = {transactions: tRes['transactions']}
+
+        // test.transactions.forEach(item => (
+        //     console.log(item)
+        // ));
     }
   );
 };

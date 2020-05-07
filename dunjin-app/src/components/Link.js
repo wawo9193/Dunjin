@@ -3,6 +3,7 @@ import React, { Component } from "react";
 // import PlaidLink from "react-plaid-link";
 import {PlaidLink} from "react-plaid-link";
 import axios from "axios";
+import Transact from "./Transact";
 
 class Link extends Component {
   constructor() {
@@ -34,6 +35,7 @@ class Link extends Component {
   }
 
   render() {
+      console.log(this.state.transactions);
     return (
       <div>
         <PlaidLink
@@ -49,6 +51,22 @@ class Link extends Component {
         </PlaidLink>
         <div>
           <button onClick={this.handleClick}>Get Transactions</button>
+        </div>
+        <div>
+            <table style={{width:"800px"}}>
+                <tr>
+                    <th>Name</th>
+                    <th>Amount ($)</th>
+                    <th>Date</th>
+                </tr>
+                {this.state.transactions.map(item => (
+                    <Transact 
+                        t_date={item.date}
+                        t_name={item.name} 
+                        t_amount={item.amount}
+                    />
+                ))}
+            </table>
         </div>
       </div>
     );
