@@ -37,42 +37,39 @@ const receivePublicToken = (req, res) => {
 };
 
 const getTransactions = (req, res) => {
-  // Pull transactions for the last 30 days
-  console.log("in here?")
-  let startDate = moment()
-    .subtract(30, "days")
+    // Pull transactions for the last 30 days
+    let startDate = moment()
+    .subtract(60, "days")
     .format("YYYY-MM-DD");
-  let endDate = moment().format("YYYY-MM-DD");
-//   console.log("made it past variables");
-  client.getTransactions(
-    ACCESS_TOKEN,
-    startDate,
-    endDate,
-    {
-      count: 250,
-      offset: 0
-    },
-    function(error, tRes) {
-      res.send(tRes['transactions']);
-    //   console.log(tRes);
-        // console.log(tRes);
-        // // console.log("****************")
-        console.log(tRes['transactions'][0]);
-        // // console.log("****************")
-        // var n = tRes['total_transactions']
-        // for (var i=0; i<n; i++) {
-        //     console.log(tRes['transactions'][i]['name'] + ' - ' + tRes['transactions'][i]['amount']);
-        // }
-        // var test = {transactions: tRes['transactions']}
+    let endDate = moment().format("YYYY-MM-DD");
+    //   console.log("made it past variables");
+    client.getTransactions(ACCESS_TOKEN, startDate, endDate, { count: 250, offset: 0 },
+        function(error, tRes) {
+            res.send(tRes['transactions']);
+            console.log("IN CONTROLLER");
+        }
+    );
+};
 
-        // test.transactions.forEach(item => (
-        //     console.log(item)
-        // ));
-    }
-  );
+const getBalance = (req, res) => {
+    // console.log("in balance");
+    client.getBalance(ACCESS_TOKEN, (err, bres) => {
+        // const accounts = res.accounts;
+        if (err) res.send({checking : 0});
+
+        let n = bres.accounts.length;
+        var avail = 0;
+        for (var i=0; i<n; i++) {
+            // console.log(bres.accounts[i].balances);
+            avail += (bres.accounts[i].subtype == "checking") ? bres.accounts[i].balances.available : 0;
+        }
+        // console.log(avail + " is how much available in checking");
+        res.send({checking : avail});
+    });  
 };
 
 module.exports = {
   receivePublicToken,
-  getTransactions
+  getTransactions,
+  getBalance
 };

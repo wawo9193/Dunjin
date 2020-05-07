@@ -24,13 +24,15 @@ class Link extends Component {
   }
 
   handleOnExit() {
-    // handle the case when your user exits Link
-    // For the sake of this tutorial, we're not going to be doing anything here.
+    // handle the case when user exits Link
   }
 
   handleClick(res) {
     axios.get("/transactions").then(res => {
       this.setState({ transactions: res.data });
+    });
+    axios.get("/accounts/balance/get").then(res => {
+        this.setState({ account: res.data });
     });
   }
 
