@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import {PlaidLink} from "react-plaid-link";
 import axios from "axios";
 import Transact from "./Transact";
+import Net from "./Net";
 
 class Link extends Component {
   constructor() {
@@ -37,40 +38,62 @@ class Link extends Component {
   }
 
   render() {
-      console.log(this.state.transactions);
+    console.log(this.state.transactions);
     return (
-      <div>
-        <PlaidLink
-          clientName="React Plaid Setup"
-          env="sandbox"
-          product={["auth", "transactions"]}
-          publicKey="c46bbe6410966ad208a81aa46d28f7"
-          onExit={this.handleOnExit}
-          onSuccess={this.handleOnSuccess}
-          className="test"
-        >
-          Open Link and connect your bank!
-        </PlaidLink>
         <div>
-          <button onClick={this.handleClick}>Get Transactions</button>
-        </div>
-        <div>
-            <table style={{width:"800px"}}>
-                <tr>
-                    <th>Name</th>
-                    <th>Amount ($)</th>
-                    <th>Date</th>
-                </tr>
-                {this.state.transactions.map(item => (
+            <h2>Dunjin</h2>
+            <div>
+                <Net 
+                    income={this.state.transactions.reduce(function(acc,elt) {
+                        console.log(elt.amount);
+                        if (elt.amount>0) {
+                            return acc + elt.amount;
+                        } else {
+                            return acc;
+                        }
+                    },0)}
+                    expense={this.state.transactions.reduce(function(acc,elt) {
+                        if (elt.amount<0) {
+                            return acc + elt.amount;
+                        } else {
+                            return acc;
+                        }
+                    },0)}
+                />
+            </div>
+            <div>
+                <PlaidLink
+                    clientName="React Plaid Setup"
+                    env="sandbox"
+                    product={["auth", "transactions"]}
+                    publicKey="c46bbe6410966ad208a81aa46d28f7"
+                    onExit={this.handleOnExit}
+                    onSuccess={this.handleOnSuccess}
+                    className="test"
+                >
+                    Open Link and connect your bank!
+                </PlaidLink>
+            </div>
+            <div>
+                <button onClick={this.handleClick}>Get Transactions</button>
+            </div>
+            <div>
+                <table style={{width:"800px"}}>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount ($)</th>
+                        <th>Date</th>
+                    </tr>
+                    {this.state.transactions.map(item => (
                     <Transact 
-                        t_date={item.date}
-                        t_name={item.name} 
-                        t_amount={item.amount}
+                    t_date={item.date}
+                    t_name={item.name} 
+                    t_amount={item.amount}
                     />
-                ))}
-            </table>
+                    ))}
+                </table>
+            </div>
         </div>
-      </div>
     );
   }
 }
