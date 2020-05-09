@@ -6,7 +6,7 @@ A financial tracker app using the Plaid API and React/Node/Express.
 - Later stages, the plan involves usability assessment testing, auth., and storing data/sessions.
 
 #### Current:
-![alt text](https://github.com/wawo9193/Dunjin/)
+![screen shot](https://github.com/wawo9193/Dunjin/Dunjin-app/screenshot.jpg)
 
 #### To Run:
 - move to root directory of app 'dunjin-app' by using 'cd'
