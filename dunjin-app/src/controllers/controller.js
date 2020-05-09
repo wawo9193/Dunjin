@@ -8,7 +8,9 @@ var PLAID_PUBLIC_KEY = "c46bbe6410966ad208a81aa46d28f7";
 var PLAID_ENV = "sandbox";
 
 var ACCESS_TOKEN = null;
+// var ASSET_REPORT_TOKEN = null;
 var PUBLIC_TOKEN = null;
+// var ASSET_REPORT_ID = null;
 var ITEM_ID = null;
 
 // Initialize the Plaid client
@@ -21,20 +23,57 @@ var client = new plaid.Client(
 );
 
 const receivePublicToken = (req, res) => {
-  // First, receive the public token and set it to a variable
-  let PUBLIC_TOKEN = req.body.public_token;
-  // Second, exchange the public token for an access token
-  client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
-    ACCESS_TOKEN = tokenResponse.access_token;
-    ITEM_ID = tokenResponse.item_id;
-    res.json({
-      access_token: ACCESS_TOKEN,
-      item_id: ITEM_ID
+    // First, receive the public token and set it to a variable
+    PUBLIC_TOKEN = req.body.public_token;
+    // Second, exchange the public token for an access token
+    client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
+        ACCESS_TOKEN = tokenResponse.access_token;
+        ITEM_ID = tokenResponse.item_id;
+        res.json({
+            access_token: ACCESS_TOKEN,
+            item_id: ITEM_ID
+        });
+        console.log("access token below");
+        console.log(ACCESS_TOKEN);
     });
-    console.log("access token below");
-    console.log(ACCESS_TOKEN);
-  });
 };
+
+// const receiveReportToken = (req, res) => {
+//     const daysRequested = 60;
+//     const options = {
+//         client_report_id: '123',
+//         webhook: 'https://www.example.com',
+//         user: {
+//         client_user_id: '789',
+//         first_name: 'Jane',
+//         middle_name: 'Leah',
+//         last_name: 'Doe',
+//         ssn: '123-45-6789',
+//         phone_number: '(555) 123-4567',
+//         email: 'jane.doe@example.com',
+//         },
+//     };
+
+//     // ACCESS_TOKENS is an array of Item access tokens.
+//     // Note that the assets product must be enabled for all Items.
+//     // All fields on the options object are optional.
+//     client.createAssetReport(ACCESS_TOKEN, daysRequested, options=null, (error, createResponse) => {
+//         if (error != null) {
+//             console.log("Create Report Error: " + error);
+//             return;
+//         }
+
+//         ASSET_REPORT_ID = createResponse.asset_report_id;
+//         ASSET_REPORT_TOKEN = createResponse.asset_report_token;
+
+//         res.json({
+//             asset_report_token: ASSET_REPORT_TOKEN,
+//             assetReportId: ASSET_REPORT_ID
+//         });
+//         console.log("access report token below");
+//         console.log(ACCESS_REPORT_TOKEN);
+//     });
+// }
 
 const getTransactions = (req, res) => {
     // Pull transactions for the last 30 days
@@ -56,7 +95,7 @@ const getBalance = (req, res) => {
     client.getBalance(ACCESS_TOKEN, (err, bres) => {
         // const accounts = res.accounts;
         if (err) res.send({checking : 0});
-
+        // console.log(bres);
         let n = bres.accounts.length;
         var avail = 0;
         for (var i=0; i<n; i++) {
@@ -68,8 +107,30 @@ const getBalance = (req, res) => {
     });  
 };
 
+// const getHistory = (req,res) => {
+//     client.getAssetReport(ASSET_REPORT_TOKEN, false, (error, getResponse) => {
+//         if (error != null) {
+//             if (error.status_code === 400 && error.error_code === 'PRODUCT_NOT_READY') {
+//                 console.log("Asset report is not ready yet. Try again later.");
+//                 return;
+//             } else {
+//                 console.log("Retrieve Report Error: ", error);
+//                 return;
+//             }
+//         }
+
+//         const report = getResponse.report;
+//         console.log("ASSETREPORT");
+//         console.log(report);
+//     });
+// };
+
+
+
 module.exports = {
-  receivePublicToken,
-  getTransactions,
-  getBalance
+    receivePublicToken,
+    // receiveReportToken,
+    getTransactions,
+    getBalance
+    // getHistory
 };

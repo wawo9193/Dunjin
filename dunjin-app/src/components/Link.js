@@ -1,47 +1,56 @@
 
 import React, { Component } from "react";
-// import PlaidLink from "react-plaid-link";
 import {PlaidLink} from "react-plaid-link";
 import axios from "axios";
 import Transact from "./Transact";
 import Net from "./Net";
+import "./Link.css";
+// import Graph from "./Graph";
+var MYSTORE = null;
 
 class Link extends Component {
-  constructor() {
-    super();
+    constructor() {
+        super();
 
-    this.state = {
-      transactions: []
-    };
+        this.state = {
+            transactions: []
+        };
 
-    this.handleClick = this.handleClick.bind(this);
-  }
+        this.handleClick = this.handleClick.bind(this);
+    }
 
-  handleOnSuccess(public_token, metadata) {
-    // send token to client server
-    axios.post("/auth/public_token", {
-      public_token: public_token
-    });
-  }
+    handleOnSuccess(public_token, metadata) {
+        // send token to client server
+        axios.post("/auth/public_token", {
+            public_token: public_token
+        });
+    }
 
   handleOnExit() {
     // handle the case when user exits Link
   }
 
-  handleClick(res) {
-    axios.get("/transactions").then(res => {
-      this.setState({ transactions: res.data });
-    });
-    axios.get("/accounts/balance/get").then(res => {
-        this.setState({ account: res.data });
-    });
-  }
+    handleClick(res) {
+        axios.get("/transactions").then(res => {
+            this.setState({ transactions: res.data });
+        });
+        axios.get("/accounts/balance/get").then(res => {
+            this.setState({ account: res.data });
+        });
+        axios.get("/asset_report/get").then(res => {
+            this.setState({ history: res.data });
+        });
+    }
 
   render() {
     console.log(this.state.transactions);
     return (
         <div>
-            <h2>Dunjin</h2>
+            {/* <div>
+                <Graph
+                    test={this.state.history}
+                />
+            </div> */}
             <div>
                 <Net 
                     income={this.state.transactions.reduce(function(acc,elt) {
@@ -69,7 +78,7 @@ class Link extends Component {
                     publicKey="c46bbe6410966ad208a81aa46d28f7"
                     onExit={this.handleOnExit}
                     onSuccess={this.handleOnSuccess}
-                    className="test"
+                    // className={mystyle.btn}
                 >
                     Open Link and connect your bank!
                 </PlaidLink>
@@ -77,21 +86,23 @@ class Link extends Component {
             <div>
                 <button onClick={this.handleClick}>Get Transactions</button>
             </div>
-            <div>
-                <table style={{width:"800px"}}>
-                    <tr>
-                        <th>Name</th>
-                        <th>Amount ($)</th>
-                        <th>Date</th>
-                    </tr>
-                    {this.state.transactions.map(item => (
-                    <Transact 
-                    t_date={item.date}
-                    t_name={item.name} 
-                    t_amount={item.amount}
-                    />
-                    ))}
-                </table>
+            <div className="bgTable">
+                <div style={{marginTop:"5px", display:"inline-block"}}>
+                    <table style={{width:"800px"}}>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount ($)</th>
+                            <th>Date</th>
+                        </tr>
+                        {this.state.transactions.map(item => (
+                        <Transact 
+                        t_date={item.date}
+                        t_name={item.name} 
+                        t_amount={item.amount}
+                        />
+                        ))}
+                    </table>
+                </div>
             </div>
         </div>
     );
