@@ -5,8 +5,6 @@ import axios from "axios";
 import Transact from "./Transact";
 import Net from "./Net";
 import "./Link.css";
-// import Graph from "./Graph";
-var MYSTORE = null;
 
 class Link extends Component {
     constructor() {
@@ -26,9 +24,9 @@ class Link extends Component {
         });
     }
 
-  handleOnExit() {
-    // handle the case when user exits Link
-  }
+    handleOnExit() {
+        // handle the case when user exits Link
+    }
 
     handleClick(res) {
         axios.get("/transactions").then(res => {
@@ -42,35 +40,30 @@ class Link extends Component {
         });
     }
 
-  render() {
-    console.log(this.state.transactions);
-    return (
-        <div>
-            {/* <div>
-                <Graph
-                    test={this.state.history}
-                />
-            </div> */}
+    render() {
+        console.log(this.state.transactions);
+        return (
             <div>
-                <Net 
-                    income={this.state.transactions.reduce(function(acc,elt) {
-                        console.log(elt.amount);
-                        if (elt.amount>0) {
-                            return acc + elt.amount;
-                        } else {
-                            return acc;
-                        }
-                    },0)}
-                    expense={this.state.transactions.reduce(function(acc,elt) {
-                        if (elt.amount<0) {
-                            return acc + elt.amount;
-                        } else {
-                            return acc;
-                        }
-                    },0)}
-                />
-            </div>
-            <div>
+                <div>
+                    <Net 
+                        income={this.state.transactions.reduce(function(acc,elt) {
+                            console.log(elt.amount);
+                            if (elt.amount>0) {
+                                return acc + elt.amount;
+                            } else {
+                                return acc;
+                            }
+                        },0)}
+                        expense={this.state.transactions.reduce(function(acc,elt) {
+                            if (elt.amount<0) {
+                                return acc + elt.amount;
+                            } else {
+                                return acc;
+                            }
+                        },0)}
+                    />
+                </div>
+                <div>
                 <PlaidLink
                     clientName="React Plaid Setup"
                     env="sandbox"
@@ -82,31 +75,31 @@ class Link extends Component {
                 >
                     Open Link and connect your bank!
                 </PlaidLink>
-            </div>
-            <div>
-                <button onClick={this.handleClick}>Get Transactions</button>
-            </div>
-            <div className="bgTable">
-                <div style={{marginTop:"5px", display:"inline-block"}}>
-                    <table style={{width:"800px"}}>
-                        <tr>
-                            <th>Name</th>
-                            <th>Amount ($)</th>
-                            <th>Date</th>
-                        </tr>
-                        {this.state.transactions.map(item => (
-                        <Transact 
-                        t_date={item.date}
-                        t_name={item.name} 
-                        t_amount={item.amount}
-                        />
-                        ))}
-                    </table>
+                </div>
+                <div>
+                    <button onClick={this.handleClick}>Get Transactions</button>
+                </div>
+                <div className="bgTable">
+                    <div style={{marginTop:"5px", display:"inline-block"}}>
+                        <table style={{width:"800px"}}>
+                            <tr>
+                                <th>Name</th>
+                                <th>Amount ($)</th>
+                                <th>Date</th>
+                            </tr>
+                            {this.state.transactions.map(item => (
+                            <Transact 
+                            t_date={item.date}
+                            t_name={item.name} 
+                            t_amount={item.amount}
+                            />
+                            ))}
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
-  }
+        );
+    }
 }
 
 export default Link;

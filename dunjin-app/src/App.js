@@ -6,10 +6,13 @@ import Banner from "./components/Banner";
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <Banner />
-      <Link />
-      <br/>
+      <div className="App">
+        <h1>Dunjin</h1>
+        <Link />
+        <br/>
+      </div>
     </div>
   );
 }
