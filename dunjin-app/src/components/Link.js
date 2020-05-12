@@ -35,9 +35,9 @@ class Link extends Component {
         axios.get("/accounts/balance/get").then(res => {
             this.setState({ account: res.data });
         });
-        axios.get("/asset_report/get").then(res => {
-            this.setState({ history: res.data });
-        });
+        // axios.get("/asset_report/get").then(res => {
+        //     this.setState({ history: res.data });
+        // });
     }
 
     render() {

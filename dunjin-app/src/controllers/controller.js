@@ -1,6 +1,9 @@
 
 var plaid = require("plaid");
 var moment = require("moment");
+var mysql = require('mysql');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 var PLAID_CLIENT_ID = "5e5fdfd57fe8f6001127093a";
 var PLAID_SECRET = "6d6c5d4ea10908e333e273d193bfce";
@@ -11,13 +14,24 @@ var ACCESS_TOKEN = null;
 var PUBLIC_TOKEN = null;
 var ITEM_ID = null;
 
+var con = mysql.createConnection({
+    host: "localhost",
+    user: "wawo9193",
+    password: "L337B01"
+  });
+  
+con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+
 // Initialize the Plaid client
 var client = new plaid.Client(
-  PLAID_CLIENT_ID,
-  PLAID_SECRET,
-  PLAID_PUBLIC_KEY,
-  plaid.environments[PLAID_ENV],
-  { version: "2019-05-29", clientApp: "Plaid Quickstart" }
+    PLAID_CLIENT_ID,
+    PLAID_SECRET,
+    PLAID_PUBLIC_KEY,
+    plaid.environments[PLAID_ENV],
+    { version: "2019-05-29", clientApp: "Plaid Quickstart" }
 );
 
 const receivePublicToken = (req, res) => {
@@ -31,6 +45,7 @@ const receivePublicToken = (req, res) => {
             access_token: ACCESS_TOKEN,
             item_id: ITEM_ID
         });
+        console.log("-> " + ITEM_ID);
         console.log("access token below");
         console.log(ACCESS_TOKEN);
     });
@@ -65,8 +80,22 @@ const getBalance = (req, res) => {
     });  
 };
 
+const logIn = (req, res) => {
+    email = req.body.email;
+    pass = req.body.password;
+
+    // console.log("email: " + req.body.email + " and pw: " + req.body.password);
+
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+        bcrypt.hash(pass, salt, (err, hash) => {
+            // console.log("Pass:" + pass + " -> Hashed: " + hash);
+        });
+    });
+};
+
 module.exports = {
     receivePublicToken,
     getTransactions,
-    getBalance
+    getBalance,
+    logIn
 };
