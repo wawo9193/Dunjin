@@ -1,8 +1,6 @@
 
 import React from "react";
-import "./Transact.css";
-// import PlaidLink from "react-plaid-link";
-// import axios from "axios";
+import "./stylesheets/Transact.css";
 
 const Transact = (props) => {
     console.log(props);

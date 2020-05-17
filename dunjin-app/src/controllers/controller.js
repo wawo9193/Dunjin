@@ -1,7 +1,9 @@
 
 var plaid = require("plaid");
 var moment = require("moment");
-var mysql = require('mysql');
+const mysql = require('mysql');
+const jwt = require('jsonwebtoken');
+const jwtSecret = 'milleniumfalcon';
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -69,7 +71,7 @@ const getBalance = (req, res) => {
     client.getBalance(ACCESS_TOKEN, (err, bres) => {
 
         if (err) res.send({checking : 0});
-
+        console.log(bres);
         let n = bres.accounts.length;
         var avail = 0;
 
@@ -83,14 +85,70 @@ const getBalance = (req, res) => {
 const logIn = (req, res) => {
     email = req.body.email;
     pass = req.body.password;
+    clicked = req.body.clicked;
+    
 
-    // console.log("email: " + req.body.email + " and pw: " + req.body.password);
-
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-        bcrypt.hash(pass, salt, (err, hash) => {
-            // console.log("Pass:" + pass + " -> Hashed: " + hash);
+    if (clicked == 'Login') {
+        bcrypt.genSalt(saltRounds, (err, salt) => {
+            bcrypt.hash(pass, salt, (err, hash) => {
+                con.query("SELECT * FROM userDb.users WHERE email=?",email,(error, results) => {
+                    if (!error) {
+                        // console.log(results[0].email);
+                        const storedHash = results[0].password;
+                        // Load hash from the db, which was preivously stored 
+                        bcrypt.compare(pass, storedHash, function(err, isUser) {
+                            if (isUser == true) { // PW Match
+                                const authToken = jwt.sign({ email: email, password: pass }, jwtSecret);
+                                res.cookie('token', authToken, { httpOnly: true }).sendStatus(200);
+                            } else {
+                                res.send('Email or password is incorrect');
+                            }                        
+                        });
+                    } else {
+                        console.log("query error");
+                    }
+                });
+            });
         });
-    });
+    } else if (clicked == 'Signup') {
+        console.log("signup");
+        bcrypt.genSalt(saltRounds, (err, salt) => {
+            bcrypt.hash(pass, salt, (err, hash) => {
+                con.query("SELECT * FROM userDb.users WHERE email=?",email,(error, results) => {
+                    if (!error) {
+                        if (results == '') {
+                            // Signup
+                            con.query("INSERT INTO userDb.users (email,password,itemID,token,tokenType) VALUES (?,?,NULL,NULL,NULL)", [email,pass]);
+                            res.sendStatus(200);
+                        } else {
+                            console.log(storedEmail + " already exists in the db.");
+                        }
+                    } else {
+                        console.log("query error");
+                    }
+                });
+            });
+        });
+    }
+};
+
+const authenticateJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+
+        jwt.verify(token, accessTokenSecret, (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            req.user = user;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
 };
 
 module.exports = {

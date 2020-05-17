@@ -1,0 +1,14 @@
+.bgTable {
+    width: 900px;
+    height: auto;
+    /* background-color: #343a40; */
+    background-image: url("../../style/twotonebg2.png");
+    opacity: 0.8;
+    text-align: center;
+    border-radius: 20px 20px 20px 20px;
+    
+}
+
+.noDisplay {
+    display: none;
+}

@@ -4,17 +4,19 @@ import {PlaidLink} from "react-plaid-link";
 import axios from "axios";
 import Transact from "./Transact";
 import Net from "./Net";
-import "./Link.css";
+import "./stylesheets/Link.css";
 
 class Link extends Component {
     constructor() {
         super();
 
         this.state = {
-            transactions: []
+            transactions: [],
+            show: false
         };
 
         this.handleClick = this.handleClick.bind(this);
+        this.handleOnSuccess = this.handleOnSuccess.bind(this);
     }
 
     handleOnSuccess(public_token, metadata) {
@@ -22,6 +24,7 @@ class Link extends Component {
         axios.post("/auth/public_token", {
             public_token: public_token
         });
+        this.setState({show: true});
     }
 
     handleOnExit() {
@@ -35,16 +38,18 @@ class Link extends Component {
         axios.get("/accounts/balance/get").then(res => {
             this.setState({ account: res.data });
         });
-        // axios.get("/asset_report/get").then(res => {
-        //     this.setState({ history: res.data });
-        // });
+    }
+
+    hideShow(res) {
+
     }
 
     render() {
+        const beforeConnect = this.state.show ? "" : "noDisplay";
         console.log(this.state.transactions);
         return (
             <div>
-                <div>
+                <div className={beforeConnect}>
                     <Net 
                         income={this.state.transactions.reduce(function(acc,elt) {
                             console.log(elt.amount);
@@ -71,30 +76,31 @@ class Link extends Component {
                     publicKey="c46bbe6410966ad208a81aa46d28f7"
                     onExit={this.handleOnExit}
                     onSuccess={this.handleOnSuccess}
-                    // className={mystyle.btn}
                 >
                     Open Link and connect your bank!
                 </PlaidLink>
                 </div>
-                <div>
+                <div className={beforeConnect}>
                     <button onClick={this.handleClick}>Get Transactions</button>
                 </div>
-                <div className="bgTable">
-                    <div style={{marginTop:"5px", display:"inline-block"}}>
-                        <table style={{width:"800px"}}>
-                            <tr>
-                                <th>Name</th>
-                                <th>Amount ($)</th>
-                                <th>Date</th>
-                            </tr>
-                            {this.state.transactions.map(item => (
-                            <Transact 
-                            t_date={item.date}
-                            t_name={item.name} 
-                            t_amount={item.amount}
-                            />
-                            ))}
-                        </table>
+                <div className={beforeConnect}>
+                    <div className="bgTable">
+                        <div style={{marginTop:"5px", display:"inline-block"}}>
+                            <table style={{width:"800px"}}>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Amount ($)</th>
+                                    <th>Date</th>
+                                </tr>
+                                {this.state.transactions.map(item => (
+                                <Transact 
+                                t_date={item.date}
+                                t_name={item.name} 
+                                t_amount={item.amount}
+                                />
+                                ))}
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
