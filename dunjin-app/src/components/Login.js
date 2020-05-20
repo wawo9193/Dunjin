@@ -56,10 +56,11 @@ class Login extends Component {
                 'Content-Type': 'application/json;charset=UTF-8',
             }
         }).then((response) => {
+            console.log(response);
             if (response.status === 200) {
-                this.props.onSubmit(true);
+                this.props.onSubmit(true, "Login");
             } else {
-                this.props.onSubmit(false);
+                this.props.onSubmit(false, "");
             }
 
         }).catch(err => {

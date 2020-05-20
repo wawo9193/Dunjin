@@ -1,5 +1,6 @@
 
 import React, { Component } from "react";
+import axios from "axios";
 import "./App.css";
 import Link from "./components/Link";
 import Banner from "./components/Banner";
@@ -10,13 +11,17 @@ class App extends Component {
     super();
 
     this.state = {
-      loggedIn: false,
-      attempts: 0
+      loggedIn: false
     };
   }
 
-  handleSubmit = (authVal) => {
-    this.setState({ loggedIn: authVal });
+  handleSubmit = (isAuth, status) => {
+
+    if (status == "Logout") {
+      axios.get('/logout');
+    }
+
+    this.setState({ loggedIn: isAuth });
   }
 
   render () {

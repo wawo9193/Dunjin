@@ -37,7 +37,7 @@ class Banner extends Component {
     }
 
     handleSubmit = () => {
-        this.props.onSubmit(false);
+        this.props.onSubmit(false, "Logout");
     }
 
     render() {

@@ -12,7 +12,8 @@ class Link extends Component {
 
         this.state = {
             transactions: [],
-            show: false
+            cshow: false,
+            tshow: false
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -24,7 +25,7 @@ class Link extends Component {
         axios.post("/auth/public_token", {
             public_token: public_token
         });
-        this.setState({show: true});
+        this.setState({cshow: true});
     }
 
     handleOnExit() {
@@ -38,18 +39,31 @@ class Link extends Component {
         axios.get("/accounts/balance/get").then(res => {
             this.setState({ account: res.data });
         });
+        this.setState({tshow: true});
     }
 
-    hideShow(res) {
+    checkID(){
+        axios.get("/auth").then((response) => {
+            console.log(response.status + " before");
+            if (response.status === 202) {
+                console.log("foundid");
+                this.setState({ cshow: true });
+            }
+        });
+    }
 
+    componentDidMount() {
+        this.checkID();
     }
 
     render() {
-        const beforeConnect = this.state.show ? "" : "noDisplay";
-        console.log(this.state.transactions);
+        const beforeConnect = this.state.cshow ? "" : "noDisplay";
+        const afterConnect = this.state.cshow ? "noDisplay" : "";
+        const getTransact = this.state.tshow ? "" : "noDisplay";
+
         return (
             <div>
-                <div className={beforeConnect}>
+                <div className={getTransact}>
                     <Net 
                         income={this.state.transactions.reduce(function(acc,elt) {
                             console.log(elt.amount);
@@ -68,22 +82,22 @@ class Link extends Component {
                         },0)}
                     />
                 </div>
-                <div>
-                <PlaidLink
-                    clientName="React Plaid Setup"
-                    env="sandbox"
-                    product={["auth", "transactions"]}
-                    publicKey="c46bbe6410966ad208a81aa46d28f7"
-                    onExit={this.handleOnExit}
-                    onSuccess={this.handleOnSuccess}
-                >
-                    Open Link and connect your bank!
-                </PlaidLink>
+                <div className={afterConnect}>
+                    <PlaidLink
+                        clientName="React Plaid Setup"
+                        env="sandbox"
+                        product={["auth", "transactions"]}
+                        publicKey="c46bbe6410966ad208a81aa46d28f7"
+                        onExit={this.handleOnExit}
+                        onSuccess={this.handleOnSuccess}
+                    >
+                        Open Link and connect your bank!
+                    </PlaidLink>
                 </div>
                 <div className={beforeConnect}>
                     <button onClick={this.handleClick}>Get Transactions</button>
                 </div>
-                <div className={beforeConnect}>
+                <div className={getTransact}>
                     <div className="bgTable">
                         <div style={{marginTop:"5px", display:"inline-block"}}>
                             <table style={{width:"800px"}}>

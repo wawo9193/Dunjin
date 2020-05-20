@@ -1,4 +1,3 @@
-
 var plaid = require("plaid");
 var moment = require("moment");
 const mysql = require('mysql');
@@ -24,7 +23,7 @@ var con = mysql.createConnection({
   
 con.connect(function(err) {
     if (err) throw err;
-    console.log("Connected!");
+    console.log("DB Connected!");
 });
 
 // Initialize the Plaid client
@@ -43,13 +42,13 @@ const receivePublicToken = (req, res) => {
     client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
         ACCESS_TOKEN = tokenResponse.access_token;
         ITEM_ID = tokenResponse.item_id;
+
+        con.query("UPDATE userDb.users SET itemID = ?, accessToken = ?, publicToken = ? WHERE email = ?", [ITEM_ID,ACCESS_TOKEN,PUBLIC_TOKEN,req.email]);
+
         res.json({
             access_token: ACCESS_TOKEN,
             item_id: ITEM_ID
         });
-        console.log("-> " + ITEM_ID);
-        console.log("access token below");
-        console.log(ACCESS_TOKEN);
     });
 };
 
@@ -62,16 +61,13 @@ const getTransactions = (req, res) => {
     client.getTransactions(ACCESS_TOKEN, startDate, endDate, { count: 250, offset: 0 },
         function(error, tRes) {
             res.send(tRes['transactions']);
-            console.log("IN CONTROLLER");
         }
     );
 };
 
 const getBalance = (req, res) => {
     client.getBalance(ACCESS_TOKEN, (err, bres) => {
-
         if (err) res.send({checking : 0});
-        console.log(bres);
         let n = bres.accounts.length;
         var avail = 0;
 
@@ -87,41 +83,35 @@ const logIn = (req, res) => {
     pass = req.body.password;
     clicked = req.body.clicked;
     
-
     if (clicked == 'Login') {
         bcrypt.genSalt(saltRounds, (err, salt) => {
-            bcrypt.hash(pass, salt, (err, hash) => {
-                con.query("SELECT * FROM userDb.users WHERE email=?",email,(error, results) => {
-                    if (!error) {
-                        // console.log(results[0].email);
-                        const storedHash = results[0].password;
-                        // Load hash from the db, which was preivously stored 
-                        bcrypt.compare(pass, storedHash, function(err, isUser) {
-                            if (isUser == true) { // PW Match
-                                const authToken = jwt.sign({ email: email, password: pass }, jwtSecret);
-                                res.cookie('token', authToken, { httpOnly: true }).sendStatus(200);
-                            } else {
-                                res.send('Email or password is incorrect');
-                            }                        
-                        });
-                    } else {
-                        console.log("query error");
-                    }
-                });
+            con.query("SELECT * FROM userDb.users WHERE email = ?",email,(error, results) => {
+                if (!error) {
+                    const storedHash = results[0].password;
+                    bcrypt.compare(pass, storedHash, function(err, isUser) {
+                        if (isUser == true) { // PW Match
+                            const authToken = jwt.sign({ email: email }, jwtSecret);
+                            res.cookie('token', authToken, { httpOnly: true }).sendStatus(200);
+                        } else {
+                            res.send('Email or password is incorrect');
+                        }                        
+                    });
+                } else {
+                    console.log("query error");
+                }
             });
         });
     } else if (clicked == 'Signup') {
-        console.log("signup");
         bcrypt.genSalt(saltRounds, (err, salt) => {
             bcrypt.hash(pass, salt, (err, hash) => {
                 con.query("SELECT * FROM userDb.users WHERE email=?",email,(error, results) => {
                     if (!error) {
-                        if (results == '') {
+                        if (results[0] == undefined) {
                             // Signup
-                            con.query("INSERT INTO userDb.users (email,password,itemID,token,tokenType) VALUES (?,?,NULL,NULL,NULL)", [email,pass]);
+                            con.query("INSERT INTO userDb.users (email,password,itemID,accessToken,publicToken,tokenType) VALUES (?,?,NULL,NULL,NULL,NULL)", [email,hash]);
                             res.sendStatus(200);
                         } else {
-                            console.log(storedEmail + " already exists in the db.");
+                            console.log(email + " already exists in the db.");
                         }
                     } else {
                         console.log("query error");
@@ -132,28 +122,26 @@ const logIn = (req, res) => {
     }
 };
 
-const authenticateJWT = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-
-    if (authHeader) {
-        const token = authHeader.split(' ')[1];
-
-        jwt.verify(token, accessTokenSecret, (err, user) => {
-            if (err) {
-                return res.sendStatus(403);
+const isUser = (req, res) => {
+    con.query("SELECT * FROM userDb.users WHERE email = ?", req.email, (error, results) => {
+        if (!error) {
+            if (results[0].itemID == undefined) {
+                res.sendStatus(400);
+            } else {
+                ITEM_ID = results[0].itemID;
+                ACCESS_TOKEN = results[0].accessToken;
+                res.sendStatus(202);
             }
-
-            req.user = user;
-            next();
-        });
-    } else {
-        res.sendStatus(401);
-    }
-};
+        } else {
+            res.sendStatus(401);
+        }
+    });
+}
 
 module.exports = {
     receivePublicToken,
     getTransactions,
     getBalance,
-    logIn
+    logIn,
+    isUser
 };
