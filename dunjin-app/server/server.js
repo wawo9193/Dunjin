@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 var express = require("express");
 var app = express();
 const cookieParser = require('cookie-parser');
 var withAuth = require('./middleware');
-const PORT = 4090;
+var PORT = 4090;
 
 const { 
     receivePublicToken,

@@ -1,24 +1,24 @@
 var plaid = require("plaid");
 var moment = require("moment");
 const mysql = require('mysql');
-const jwt = require('jsonwebtoken');
-const jwtSecret = 'milleniumfalcon';
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
+const jwtSecret = process.env.JWT_SECRET;
 
-var PLAID_CLIENT_ID = "5e5fdfd57fe8f6001127093a";
-var PLAID_SECRET = "6d6c5d4ea10908e333e273d193bfce";
-var PLAID_PUBLIC_KEY = "c46bbe6410966ad208a81aa46d28f7";
-var PLAID_ENV = "sandbox";
+var PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
+var PLAID_SECRET = process.env.PLAID_SECRET;
+var PLAID_PUBLIC_KEY = process.env.PLAID_PUBLIC_KEY;
+var PLAID_ENV = process.env.PLAID_ENV;
 
-var ACCESS_TOKEN = null;
-var PUBLIC_TOKEN = null;
-var ITEM_ID = null;
+var ACCESS_TOKEN    = null;
+var PUBLIC_TOKEN    = null;
+var ITEM_ID         = null;
 
 var con = mysql.createConnection({
-    host: "localhost",
-    user: "wawo9193",
-    password: "L337B01"
+    host        : process.env.DB_HOST,
+    user        : process.env.DB_USER,
+    password    : process.env.DB_PASS
   });
   
 con.connect(function(err) {
@@ -82,7 +82,7 @@ const logIn = (req, res) => {
     email = req.body.email;
     pass = req.body.password;
     clicked = req.body.clicked;
-    
+    console.log("1");
     if (clicked == 'Login') {
         bcrypt.genSalt(saltRounds, (err, salt) => {
             con.query("SELECT * FROM userDb.users WHERE email = ?",email,(error, results) => {
@@ -123,6 +123,7 @@ const logIn = (req, res) => {
 };
 
 const isUser = (req, res) => {
+    console.log("2");
     con.query("SELECT * FROM userDb.users WHERE email = ?", req.email, (error, results) => {
         if (!error) {
             if (results[0].itemID == undefined) {

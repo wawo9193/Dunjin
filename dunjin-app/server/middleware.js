@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secret = 'milleniumfalcon';
+const secret = process.env.JWT_SECRET;
 
 const withAuth = function(req, res, next) {
     const token = req.cookies.token;  
