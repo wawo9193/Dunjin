@@ -1,19 +1,25 @@
 ul {
     list-style-type: none;
     margin: 0;
-    padding: 20px 0 10px;
+    padding: 0;
     background-color: #000000;
-    height: 30px;
+    height: 58px;
     position: fixed;
     top: 0;
     width: 100%;
-  }
+}
 
 li {
     display: inline;
     text-align: center;
-    padding-left: 10px;
     color: white;
+}
+
+.rightElements:hover {
+    height:18px;
+    background-color:#383838;
+    color: #c41c6a;
+    cursor: pointer;
 }
 
 a {
@@ -37,4 +43,13 @@ a {
 .rightElements {
     text-decoration: none;
     float: right;
+    height: 20px;
+    padding: 20px;
+}
+
+.leftElements {
+    text-decoration: none;
+    float: left;
+    height: 20px;
+    padding: 20px;
 }

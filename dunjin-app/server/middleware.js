@@ -3,7 +3,6 @@ const secret = process.env.JWT_SECRET;
 
 const withAuth = function(req, res, next) {
     const token = req.cookies.token;  
-
     if (!token) {
         res.status(401).send('Unauthorized: No token provided');
     } else {
@@ -13,12 +12,6 @@ const withAuth = function(req, res, next) {
             } else {
                 req.email = decoded.email;
                 req.password = decoded.password;
-
-                if (decoded.itemid!=undefined) {
-                    console.log("inhere");
-                    req.itemid = decoded.itemid;
-                    req.token = decoded.token;
-                }
                 next();
             }
         });

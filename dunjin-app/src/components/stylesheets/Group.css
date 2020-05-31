@@ -1,0 +1,44 @@
+.container {
+    width: 960px;
+    height: 500px;
+    background-image: url("../../style/twotonebg2.png");
+    text-align: center;
+    padding: 20px;
+    overflow: scroll;
+}
+
+.innercontainer {
+    width: 700px;
+    min-height: 400px;
+    background-color: #383838;
+    opacity: 80%;
+    border-radius: 20px;
+    margin-left: 120px;
+    padding: 20px;
+}
+
+.piechartbg {
+    float: left;
+    width: 300px;
+    height: 300px;
+    padding: 30px;
+}
+
+.piechartinfo {
+    font-size: medium;
+    padding: 30px;
+    float: right;
+    width: 200px;
+    height: 300px;
+}
+
+.monthform {
+    width:"200px"; 
+    right:"20px"; 
+    text-align: left;
+}
+
+.monthform select {
+    background-color: black;
+    height:25px;
+}

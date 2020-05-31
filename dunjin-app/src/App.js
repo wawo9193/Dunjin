@@ -17,7 +17,7 @@ class App extends Component {
 
   handleSubmit = (isAuth, status) => {
 
-    if (status == "Logout") {
+    if (status === "Logout") {
       axios.get('/logout');
     }
 
@@ -30,7 +30,6 @@ class App extends Component {
         <div>
           <Banner onSubmit={this.handleSubmit} />
           <div className="App">
-            <h1>Dunjin</h1>
             <Link />
             <br/>
           </div>

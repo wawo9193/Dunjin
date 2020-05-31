@@ -10,6 +10,8 @@ const {
     receivePublicToken,
     getTransactions,
     getBalance,
+    putCat,
+    getCat,
     logIn,
     isUser
 } = require("../src/controllers/controller");
@@ -22,6 +24,8 @@ app.post("/auth/public_token", withAuth, receivePublicToken);// Get Transactions
 app.get("/transactions", getTransactions);
 app.get("/accounts/balance/get", getBalance);
 app.post("/users/login", logIn);
+app.post("/categories/post", putCat);
+app.get("/categories/get", getCat);
 app.get("/auth", withAuth, isUser);
 app.get("/logout", (req, res) => {
     res.clearCookie('token').sendStatus(200);

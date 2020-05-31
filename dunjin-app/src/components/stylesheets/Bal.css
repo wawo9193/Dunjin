@@ -1,0 +1,26 @@
+.netable {
+    font-size: small;
+    border-collapse: collapse;
+    width: 800px;
+    margin: 50px;
+  }
+  
+  .netable td, .netable th {
+    border: 2px solid #000000;
+    text-align: left;
+    width: 800px;
+  }
+  
+.netable th {
+    background-color: #000000;
+}
+
+ .netable tr:nth-child(odd) {
+    background-color: #383838;
+    color: gainsboro;
+  }
+
+ .netable tr:nth-child(even) {
+    background-image: url("../../style/twotonebg2.png");
+    color: white;
+  }
